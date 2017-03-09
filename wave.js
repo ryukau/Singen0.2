@@ -79,7 +79,6 @@ class Wave {
     var peakValue = divisor
     if (!Number.isFinite(divisor)) {
       var peak = this.findPeak()
-      console.log(peak)
       if (peak === null || peak.value === 0) {
         console.log("findPeak failed.")
         return
