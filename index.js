@@ -317,6 +317,8 @@ class OscillatorGroup {
     this.refreshFunc = refreshFunc
 
     this.div = new Div(parent, "OscillatorGroup")
+    this.radioButtonSelector = new RadioButton(this.div.element, "Oscillator",
+      (index) => { this.toggle(index) })
     this.controls = []
     for (var i = 0; i < 3; ++i) {
       this.push()
@@ -326,8 +328,9 @@ class OscillatorGroup {
 
   push() {
     var index = this.controls.length
-    this.buttonSelectOscillator = new Button(this.div.element,
-      "Osc" + index, () => this.toggle(index))
+    // this.buttonSelectOscillator = new Button(this.div.element,
+    //   "Osc" + index, () => this.toggle(index))
+    this.radioButtonSelector.add(index)
     this.controls.push(
       new OscillatorControl(this.div.element, this.renderParameters,
         index, this.refreshFunc))
