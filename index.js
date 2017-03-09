@@ -301,6 +301,7 @@ class OscillatorControl {
   random() {
     this.gainTension.random()
     this.pitchTension.random()
+    this.gain.random()
     this.pitchStart.random()
     this.pitchEnd.random()
   }
