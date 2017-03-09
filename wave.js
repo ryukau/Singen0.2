@@ -79,7 +79,8 @@ class Wave {
     var peakValue = divisor
     if (!Number.isFinite(divisor)) {
       var peak = this.findPeak()
-      if (peak === null) {
+      console.log(peak)
+      if (peak === null || peak.value === 0) {
         console.log("findPeak failed.")
         return
       }
@@ -122,12 +123,6 @@ class Wave {
       }
     }
   }
-
-  // resample(sourceRate, destRate) {
-  //   for (var i = 0; i < this.data.length; ++i) {
-  //     this.data[i] = Resampler.pass(this.data[i], sourceRate, destRate)
-  //   }
-  // }
 
   static fileHeader(sampleRate, channels, bufferLength) {
     var format = this.fileFormat(sampleRate, 32, channels)
