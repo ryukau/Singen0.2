@@ -264,8 +264,6 @@ class OscillatorControl {
       256, 128, 0.2, 0.2, 0.8, 0.8, refresh)
     this.pitchTension = new EnvelopeView(this.div.element,
       256, 128, 0.2, 0.2, 0.8, 0.8, refresh)
-    this.length = new NumberInput(this.div.element, "Length",
-      0.2, 0.02, 1, 0.02, refresh)
     this.gain = new NumberInput(this.div.element, "Gain",
       0.5, 0, 1, 0.01, refresh)
     this.pitchStart = new NumberInput(this.div.element, "PitchStart",
@@ -294,7 +292,6 @@ class OscillatorControl {
     this.oscillator.pitchEnvelope.set(x1, y1, x2, y2)
 
     this.oscillator.gain = this.gain.value
-    this.oscillator.length = this.length.value
     this.oscillator.pitchStart = this.pitchStart.value
     this.oscillator.pitchEnd = this.pitchEnd.value
     // this.oscillator.gainEnvelope.tension = this.gainTension.value
@@ -343,8 +340,10 @@ class OscillatorGroup {
     this.controls[index].show()
   }
 
-  get length() {
-    return this.controls[0].length.value
+  set length(length) {
+    for (let control of this.controls) {
+      control.oscillator.length = length
+    }
   }
 
   refresh() {
@@ -375,16 +374,16 @@ function random() {
 }
 
 function refresh() {
+  oscillator.length = inputDuration.value
   oscillator.refresh()
 
-  var raw = makeWave(oscillator.length, renderParameters.sampleRate)
+  var raw = makeWave(inputDuration.value, renderParameters.sampleRate)
   if (checkboxResample.value) {
     wave.left = Resampler.pass(raw, renderParameters.sampleRate, audioContext.sampleRate)
   }
   else {
     wave.left = Resampler.reduce(raw, renderParameters.sampleRate, audioContext.sampleRate)
   }
-  // wave.left = raw
   wave.declick(inputDeclickIn.value, inputDeclickOut.value)
   if (checkboxNormalize.value) {
     wave.normalize()
@@ -424,7 +423,7 @@ var checkboxQuickSave = new Checkbox(divRenderControls.element, "QuickSave",
 var divMiscControls = new Div(divMain.element, "MiscControls")
 var headingRender = new Heading(divMiscControls.element, 6, "Render Settings")
 var inputDuration = new NumberInput(divMiscControls.element, "Duration",
-  0.2, 0.02, 1, 0.02, () => refresh())
+  0.2, 0.02, 1, 0.02, (value) => { refresh() })
 var tenMilliSecond = audioContext.sampleRate / 100
 var inputDeclickIn = new NumberInput(divMiscControls.element, "DeclickIn",
   0, 0, tenMilliSecond, 1, refresh)
