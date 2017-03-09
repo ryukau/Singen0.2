@@ -171,7 +171,7 @@ class Oscillator {
     this._pitchStart = 200
     this._pitchEnd = 30
     this._length = 960
-    this.fmIndex = 16 / this.renderParameters.overSampling
+    this._fmIndex = 16 / this.renderParameters.overSampling
 
     this.phase = 0
 
@@ -187,6 +187,11 @@ class Oscillator {
   set length(value) {
     this._length = (value < 0) ? 0
       : Math.floor(this.renderParameters.sampleRate * value)
+  }
+
+  set fmIndex(index) {
+    this._fmIndex = index / this.renderParameters.overSampling
+    console.log(this._fmIndex)
   }
 
   get pitchStart() {
@@ -219,7 +224,6 @@ class Oscillator {
 
   refresh(phase) {
     this.twoPiRate = TWO_PI / this.renderParameters.sampleRate
-    this.fmIndex = 16 / this.renderParameters.overSampling
     this.phase = phase
     this.bufferOutput = 0
   }
@@ -232,7 +236,7 @@ class Oscillator {
     var envTime = time / this._length
     var gain = this.gain * this.gainEnvelope.decay(envTime)
     var output = gain * Math.sin(this.phase)
-    var mod = this.fmIndex * modulation * output
+    var mod = this._fmIndex * modulation * output
 
     var pitchEnv = this.pitchEnvelope.decay(envTime)
     var pitch = this.pow(this.pitchDiff, pitchEnv)
@@ -301,7 +305,7 @@ class OscillatorControl {
   random() {
     this.gainTension.random()
     this.pitchTension.random()
-    this.gain.random()
+    // this.gain.random()
     this.pitchStart.random()
     this.pitchEnd.random()
   }
@@ -347,6 +351,12 @@ class OscillatorGroup {
     }
   }
 
+  set fmIndex(index) {
+    for (let control of this.controls) {
+      control.oscillator.fmIndex = index
+    }
+  }
+
   refresh() {
     for (var i = 0; i < this.controls.length; ++i) {
       this.controls[i].refresh()
@@ -375,10 +385,11 @@ function random() {
 }
 
 function refresh() {
-  oscillator.length = inputDuration.value
+  oscillator.length = inputLength.value
+  oscillator.fmIndex = Math.pow(2, inputFmIndex.value)
   oscillator.refresh()
 
-  var raw = makeWave(inputDuration.value, renderParameters.sampleRate)
+  var raw = makeWave(inputLength.value, renderParameters.sampleRate)
   if (checkboxResample.value) {
     wave.left = Resampler.pass(raw, renderParameters.sampleRate, audioContext.sampleRate)
   }
@@ -423,8 +434,10 @@ var checkboxQuickSave = new Checkbox(divRenderControls.element, "QuickSave",
 
 var divMiscControls = new Div(divMain.element, "MiscControls")
 var headingRender = new Heading(divMiscControls.element, 6, "Render Settings")
-var inputDuration = new NumberInput(divMiscControls.element, "Duration",
+var inputLength = new NumberInput(divMiscControls.element, "Length",
   0.2, 0.02, 1, 0.02, (value) => { refresh() })
+var inputFmIndex = new NumberInput(divMiscControls.element, "FM Index",
+  4, 0, 8, 0.05, (value) => { refresh() })
 var tenMilliSecond = audioContext.sampleRate / 100
 var inputDeclickIn = new NumberInput(divMiscControls.element, "DeclickIn",
   0, 0, tenMilliSecond, 1, refresh)
