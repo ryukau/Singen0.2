@@ -191,7 +191,6 @@ class Oscillator {
 
   set fmIndex(index) {
     this._fmIndex = index / this.renderParameters.overSampling
-    console.log(this._fmIndex)
   }
 
   get pitchStart() {
