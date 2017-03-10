@@ -372,7 +372,7 @@ class PullDownMenu {
 
   onChange(event) {
     this.value = event.target.value
-    console.log(event)
+    this.onChangeFunc(this.value)
   }
 
   add(label) {
