@@ -502,6 +502,11 @@ var buttonSave = new Button(divRenderControls.element, "Save",
   () => save(wave))
 var buttonRandom = new Button(divRenderControls.element, "Random",
   () => random())
+var pullDownMenuRandomType = new PullDownMenu(divRenderControls.element, null,
+  () => { })
+pullDownMenuRandom.add("All")
+pullDownMenuRandom.add("Bassdrum")
+pullDownMenuRandom.add("TomA")
 var checkboxQuickSave = new Checkbox(divRenderControls.element, "QuickSave",
   false, (checked) => { })
 
