@@ -348,3 +348,43 @@ class NumberInput {
     return input
   }
 }
+
+class PullDownMenu {
+  constructor(parent, label, onChangeFunc) {
+    this.onChangeFunc = onChangeFunc
+    this.value = null
+    this.options = []
+
+    this.div = document.createElement("div")
+    this.div.className = "pullDownMenu"
+    if (typeof label === 'string' || label instanceof String) {
+      this.divLabel = document.createElement("div")
+      this.divLabel.className = "numberInputLabel"
+      this.divLabel.textContent = label
+      this.div.appendChild(this.divLabel)
+    }
+    this.select = document.createElement("select")
+    this.div.appendChild(this.select)
+    parent.appendChild(this.div)
+
+    this.select.addEventListener("change", (event) => this.onChange(event), false)
+  }
+
+  onChange(event) {
+    this.value = event.target.value
+    console.log(event)
+  }
+
+  add(label) {
+    if (typeof label !== 'string' && !(label instanceof String)) {
+      console.log("PullDownMenu.add() failed to invalid type.")
+    }
+    var option = document.createElement('option')
+    option.textContent = label
+    if (this.options.length <= 0) {
+      this.value = label
+    }
+    this.options.push(option)
+    this.select.appendChild(option)
+  }
+}
