@@ -170,7 +170,8 @@ class Oscillator {
     this.pitchEnvelope = new Envelope(0.5, 0.5, 0.5, 0.5)
     this._pitchStart = 200
     this._pitchEnd = 30
-    this._length = 960
+    this._duration = 1
+    this.length = 0.2
     this._fmIndex = 16 / this.renderParameters.overSampling
 
     this.phase = 0
@@ -180,13 +181,20 @@ class Oscillator {
     this.pitchEndFixed = this._pitchEnd - 1
   }
 
+  set duration(value) {
+    this._duration = value
+    this._sampleLength = (value < 0) ? 0 : Math.floor(
+      this._duration * this.renderParameters.sampleRate * this._timeLength)
+  }
+
   get length() {
-    return this._length
+    return this._timeLength
   }
 
   set length(value) {
-    this._length = (value < 0) ? 0
-      : Math.floor(this.renderParameters.sampleRate * value)
+    this._timeLength = value
+    this._sampleLength = (value < 0) ? 0
+      : Math.floor(this._duration * this.renderParameters.sampleRate * value)
   }
 
   set fmIndex(index) {
@@ -229,10 +237,10 @@ class Oscillator {
 
   // time is number of audio samples.
   oscillate(time, modulation) {
-    if (time > this._length || time < 0) {
+    if (time > this._sampleLength || time < 0) {
       return 0
     }
-    var envTime = time / this._length
+    var envTime = time / this._sampleLength
     var gain = this.gain * this.gainEnvelope.decay(envTime)
     var output = gain * Math.sin(this.phase)
     var mod = this._fmIndex * modulation * output
@@ -267,6 +275,8 @@ class OscillatorControl {
       256, 128, 0.2, 0.2, 0.8, 0.8, refresh)
     this.pitchTension = new EnvelopeView(this.div.element,
       256, 128, 0.2, 0.2, 0.8, 0.8, refresh)
+    this.duration = new NumberInput(this.div.element, "Duration",
+      1, 0, 1, 0.01, refresh)
     this.gain = new NumberInput(this.div.element, "Gain",
       0.5, 0, 1, 0.01, refresh)
     this.pitchStart = new NumberInput(this.div.element, "PitchStart",
@@ -294,6 +304,7 @@ class OscillatorControl {
     var { x1, y1, x2, y2 } = this.pitchTension.value
     this.oscillator.pitchEnvelope.set(x1, y1, x2, y2)
 
+    this.oscillator.duration = this.duration.value
     this.oscillator.gain = this.gain.value
     this.oscillator.pitchStart = this.pitchStart.value
     this.oscillator.pitchEnd = this.pitchEnd.value
@@ -365,9 +376,37 @@ class OscillatorGroup {
     }
   }
 
+  randomValue(min, max) {
+    return (max - min) * Math.random() + min
+  }
+
   random() {
     for (var i = 0; i < this.controls.length; ++i) {
       this.controls[i].random()
+    }
+  }
+
+  randomBassdrum() {
+    var o0 = this.controls[0]
+    o0.gainTension.random()
+    o0.pitchTension.random()
+    o0.duration.value = 1
+    o0.gain.value = 1
+    o0.pitchStart.value = this.randomValue(-2400, 1200)
+    o0.pitchEnd.value = this.randomValue(-6000, -2400)
+
+    var o1 = this.controls[1]
+    o1.gainTension.random() // 下向きにたるませる。
+    o1.pitchTension.random() // 下向きにたるませる。
+    o1.duration.value = this.randomValue(0, 0.035)
+    o1.gain.random()
+    o1.pitchStart.value = this.randomValue(1200, 4800)
+    o1.pitchEnd.value = o1.pitchStart.value - this.randomValue(0, 1700)
+    console.log(o1.pitchStart.value, o1.pitchEnd.value)
+
+    // 今のところは3段以降をミュート。
+    for (var i = 2; i < this.controls.length; ++i) {
+      this.controls[i].gain.value = 0
     }
   }
 
@@ -381,7 +420,8 @@ class OscillatorGroup {
 }
 
 function random() {
-  oscillator.random()
+  // oscillator.random()
+  oscillator.randomBassdrum()
   refresh()
   play(audioContext, wave)
 }
