@@ -450,9 +450,15 @@ class OscillatorGroup {
 }
 
 function random() {
-  // oscillator.random()
-  // oscillator.randomBassdrum()
-  oscillator.randomTomA()
+  if (pullDownMenuRandomType.value === "All") {
+    oscillator.random()
+  }
+  if (pullDownMenuRandomType.value === "Bassdrum") {
+    oscillator.randomBassdrum()
+  }
+  if (pullDownMenuRandomType.value === "TomA") {
+    oscillator.randomTomA()
+  }
   refresh()
   play(audioContext, wave)
 }
@@ -504,9 +510,9 @@ var buttonRandom = new Button(divRenderControls.element, "Random",
   () => random())
 var pullDownMenuRandomType = new PullDownMenu(divRenderControls.element, null,
   () => { })
-pullDownMenuRandom.add("All")
-pullDownMenuRandom.add("Bassdrum")
-pullDownMenuRandom.add("TomA")
+pullDownMenuRandomType.add("All")
+pullDownMenuRandomType.add("Bassdrum")
+pullDownMenuRandomType.add("TomA")
 var checkboxQuickSave = new Checkbox(divRenderControls.element, "QuickSave",
   false, (checked) => { })
 
