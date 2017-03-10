@@ -523,13 +523,13 @@ var inputLength = new NumberInput(divMiscControls.element, "Length",
 var inputFmIndex = new NumberInput(divMiscControls.element, "FM Index",
   4, 0, 8, 0.05, (value) => { refresh() })
 var tenMilliSecond = audioContext.sampleRate / 100
-var inputDeclickIn = new NumberInput(divMiscControls.element, "DeclickIn",
+var inputDeclickIn = new NumberInput(divMiscControls.element, "Declick In",
   0, 0, tenMilliSecond, 1, refresh)
-var inputDeclickOut = new NumberInput(divMiscControls.element, "DeclickOut",
+var inputDeclickOut = new NumberInput(divMiscControls.element, "Declick Out",
   0, 0, tenMilliSecond, 1, refresh)
 var checkboxNormalize = new Checkbox(divMiscControls.element, "Normalize",
   true, refresh)
-var checkboxResample = new Checkbox(divMiscControls.element, "16x Oversampling",
+var checkboxResample = new Checkbox(divMiscControls.element, "16x Sampling",
   true, (checked) => {
     renderParameters.overSampling = checked ? 16 : 1
     refresh()
