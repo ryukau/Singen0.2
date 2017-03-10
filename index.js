@@ -529,7 +529,7 @@ var inputDeclickOut = new NumberInput(divMiscControls.element, "DeclickOut",
   0, 0, tenMilliSecond, 1, refresh)
 var checkboxNormalize = new Checkbox(divMiscControls.element, "Normalize",
   true, refresh)
-var checkboxResample = new Checkbox(divMiscControls.element, "Resample",
+var checkboxResample = new Checkbox(divMiscControls.element, "16x Oversampling",
   true, (checked) => {
     renderParameters.overSampling = checked ? 16 : 1
     refresh()
