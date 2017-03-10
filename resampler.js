@@ -5,14 +5,14 @@ class Resampler {
     var win = this.blackmanHarrisWindow(this.windowLength)
     var halfWinLength = Math.floor(win.length / 2)
 
-    var ratio = sourceRate / destRate
     var cutoff = destRate / sourceRate
-    var deltaTime = 1 / destRate
 
     for (var i = 0; i < win.length; ++i) {
       var t = (i - halfWinLength)
       win[i] = cutoff * this.sinc(cutoff * t)
     }
+
+    var ratio = sourceRate / destRate
 
     for (var i = 0; i < dest.length; ++i) {
       var floor = Math.floor(i * ratio)
