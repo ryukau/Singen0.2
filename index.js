@@ -396,16 +396,49 @@ class OscillatorGroup {
     o0.pitchEnd.value = this.randomValue(-6000, -2400)
 
     var o1 = this.controls[1]
-    o1.gainTension.random() // 下向きにたるませる。
-    o1.pitchTension.random() // 下向きにたるませる。
+    o1.gainTension.random()
+    o1.pitchTension.random()
     o1.duration.value = this.randomValue(0, 0.035)
     o1.gain.random()
     o1.pitchStart.value = this.randomValue(1200, 4800)
     o1.pitchEnd.value = o1.pitchStart.value - this.randomValue(0, 1700)
-    console.log(o1.pitchStart.value, o1.pitchEnd.value)
 
-    // 今のところは3段以降をミュート。
+    // Mute the rest of oscillators.
     for (var i = 2; i < this.controls.length; ++i) {
+      this.controls[i].gain.value = 0
+    }
+  }
+
+  randomTomA() {
+    var o0 = this.controls[0]
+    o0.gainTension.random()
+    o0.pitchTension.random()
+    o0.duration.value = 1
+    o0.gain.value = 1
+    o0.pitchStart.value = this.randomValue(-1200, 1200)
+    o0.pitchEnd.value = this.randomValue(-6000, -3600)
+
+    var o1 = this.controls[1]
+    o1.gainTension.random() // 下向きにたるませたい。
+    o1.pitchTension.random()
+    o1.duration.value = 1
+    o1.gain.value = this.randomValue(0.01, 0.5)
+    o1.pitchStart.value = this.randomValue(0, 6000)
+    o1.pitchEnd.value = o1.pitchStart.value - this.randomValue(0, 3600)
+
+    var o2 = this.controls[2]
+    o2.gainTension.random()
+    o2.pitchTension.random()
+    o2.duration.value = 1
+    o2.gain.random()
+    // var pitchOffset = this.randomValue(-1200, 1200)
+    // o2.pitchStart.value = o1.pitchStart.value + pitchOffset
+    // o2.pitchEnd.value = o1.pitchEnd.value + pitchOffset
+    o2.pitchStart.value = this.randomValue(3600, 6000)
+    o2.pitchEnd.value = o2.pitchStart.value - this.randomValue(0, 3600)
+
+    // Mute the rest of oscillators.
+    for (var i = 3; i < this.controls.length; ++i) {
       this.controls[i].gain.value = 0
     }
   }
@@ -421,7 +454,8 @@ class OscillatorGroup {
 
 function random() {
   // oscillator.random()
-  oscillator.randomBassdrum()
+  // oscillator.randomBassdrum()
+  oscillator.randomTomA()
   refresh()
   play(audioContext, wave)
 }
