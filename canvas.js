@@ -306,12 +306,15 @@ class NumberInput {
     this.number.addEventListener("change", (event) => this.onInput(event), false)
   }
 
-  onInput(event) {
-    var value = event.target.valueAsNumber
+  clamp(value) {
     if (isNaN(value)) {
-      value = this.defaultValue
+      return this.defaultValue
     }
-    value = Math.max(this.min, Math.min(value, this.max))
+    return Math.max(this.min, Math.min(value, this.max))
+  }
+
+  onInput(event) {
+    var value = this.clamp(event.target.valueAsNumber)
     this.range.value = value
     this.number.value = value
     this.onInputFunc(value)
@@ -322,6 +325,7 @@ class NumberInput {
   }
 
   set value(value) {
+    this.clamp(value)
     this.range.value = value
     this.number.value = value
   }
