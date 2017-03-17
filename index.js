@@ -173,6 +173,7 @@ class Oscillator {
     this._duration = 1
     this.length = 0.2
     this._fmIndex = 16 / this.renderParameters.overSampling
+    this.modulationType = "PhaseShift"
 
     this.phase = 0
 
@@ -220,6 +221,35 @@ class Oscillator {
     this.pitchEndFixed = this._pitchEnd - 1
   }
 
+  set modulationType(type) {
+    switch (type) {
+      case "FM":
+        this.modulationFunc = (modulation, gain, pitch) => {
+          var mod = this._fmIndex * modulation
+          var output = gain * Math.sin(this.phase + mod)
+          this.phase += this.twoPiRate * (pitch + this.pitchEndFixed)
+          return output
+        }
+        break
+      case "AM":
+        this.modulationFunc = (modulation, gain, pitch) => {
+          var output = gain * Math.sin(this.phase) * (1 - Math.abs(modulation))
+          this.phase += this.twoPiRate * (pitch + this.pitchEndFixed)
+          return output
+        }
+        break
+      case "PhaseShift":
+      default:
+        this.modulationFunc = (modulation, gain, pitch) => {
+          var output = gain * Math.sin(this.phase)
+          var mod = this._fmIndex * modulation * output
+          this.phase += this.twoPiRate * (pitch + this.pitchEndFixed) + mod
+          return output
+        }
+        break
+    }
+  }
+
   // Pitch is represented by cents with center frequency at 440Hz.
   frequencyToCent(frequency) {
     return Math.log2(frequency / 440) * 1200
@@ -232,7 +262,6 @@ class Oscillator {
   refresh(phase) {
     this.twoPiRate = TWO_PI / this.renderParameters.sampleRate
     this.phase = phase
-    this.bufferOutput = 0
   }
 
   // time is number of audio samples.
@@ -242,13 +271,10 @@ class Oscillator {
     }
     var envTime = time / this._sampleLength
     var gain = this.gain * this.gainEnvelope.decay(envTime)
-    var output = gain * Math.sin(this.phase)
-    var mod = this._fmIndex * modulation * output
-
     var pitchEnv = this.pitchEnvelope.decay(envTime)
     var pitch = this.pow(this.pitchDiff, pitchEnv)
-    this.phase += this.twoPiRate * (pitch + this.pitchEndFixed) + mod
-    this.bufferOutput = output
+
+    var output = this.modulationFunc(modulation, gain, pitch)
 
     return output
   }
@@ -370,6 +396,12 @@ class OscillatorGroup {
     }
   }
 
+  set modulationType(type) {
+    for (let control of this.controls) {
+      control.oscillator.modulationType = type
+    }
+  }
+
   refresh() {
     for (var i = 0; i < this.controls.length; ++i) {
       this.controls[i].refresh()
@@ -445,7 +477,7 @@ class OscillatorGroup {
     o0.gainTension.random()
     o0.duration.value = 1
     o0.gain.value = 1
-    o0.pitchStart.value = Math.round(this.randomValue(-3, 3)) * 1200
+    o0.pitchStart.value = Math.round(this.randomValue(-3, 1)) * 1200
     o0.pitchEnd.value = o0.pitchStart.value
 
     var o1 = this.controls[1]
@@ -589,8 +621,12 @@ var divMiscControls = new Div(divMain.element, "MiscControls")
 var headingRender = new Heading(divMiscControls.element, 6, "Render Settings")
 var inputLength = new NumberInput(divMiscControls.element, "Length",
   0.2, 0.02, 1, 0.02, (value) => { refresh() })
-var inputFmIndex = new NumberInput(divMiscControls.element, "FM Index",
+var inputFmIndex = new NumberInput(divMiscControls.element, "Mod. Index",
   4, 0, 8, 0.05, (value) => { refresh() })
+var radioButtonModulationType = new RadioButton(divMiscControls.element,
+  "Mod. Type", (value) => { oscillator.modulationType = value; refresh() })
+radioButtonModulationType.add("PhaseShift")
+radioButtonModulationType.add("FM")
 var tenMilliSecond = audioContext.sampleRate / 100
 var inputDeclickIn = new NumberInput(divMiscControls.element, "Declick In",
   0, 0, tenMilliSecond, 1, refresh)
