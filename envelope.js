@@ -19,9 +19,9 @@ class Envelope {
     return 1 - this.easing(value)
   }
 
-  clamp(value) {
-    return Math.max(0, Math.min(value, 1))
-  }
+  // clamp(value) {
+  //   return Math.max(0, Math.min(value, 1))
+  // }
 
   // Return lookup table of envelope.
   // This will be used by interface.
@@ -58,11 +58,15 @@ class EnvelopeView extends Canvas {
     this.element.addEventListener("mouseout", (event) => this.onMouseOut(event), false)
   }
 
+  clampX(value) {
+    return Math.max(0, Math.min(value, 1))
+  }
+
   get value() {
     return {
-      x1: this.points[0].x / this.width,
+      x1: this.clampX(this.points[0].x / this.width),
       y1: this.points[0].y / this.height,
-      x2: this.points[1].x / this.width,
+      x2: this.clampX(this.points[1].x / this.width),
       y2: this.points[1].y / this.height,
     }
   }
