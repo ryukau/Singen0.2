@@ -440,6 +440,67 @@ class OscillatorGroup {
     }
   }
 
+  randomToneA() {
+    var o0 = this.controls[0]
+    o0.gainTension.random()
+    o0.duration.value = 1
+    o0.gain.value = 1
+    o0.pitchStart.value = Math.round(this.randomValue(-3, 3)) * 1200
+    o0.pitchEnd.value = o0.pitchStart.value
+
+    var o1 = this.controls[1]
+    o1.gainTension.random()
+    o1.duration.value = 1
+    o1.gain.value = this.randomValue(0.01, 0.5)
+    var o0pitch = o0.pitchStart.value
+    var freq = 440 * Math.pow(2, o0pitch / 1200)
+    var overtone = Math.floor(this.randomValue(1, 16))
+    var raw = Math.log2(freq * overtone / 440) * 1200
+    var fixed = o0pitch + (raw - o0pitch) % 2400
+    o1.pitchStart.value = fixed + this.randomValue(-25, 25)
+    o1.pitchEnd.value = o1.pitchStart.value
+
+    var o2 = this.controls[2]
+    o2.gainTension.random()
+    o2.duration.value = 1
+    o2.gain.random()
+    o2.pitchStart.value = this.randomValue(-6000, 6000)
+    o2.pitchEnd.value = o2.pitchStart.value
+
+    // Mute the rest of oscillators.
+    for (var i = 3; i < this.controls.length; ++i) {
+      this.controls[i].gain.value = 0
+    }
+  }
+
+  randomToneB() {
+    var o0 = this.controls[0]
+    o0.gainTension.random()
+    o0.duration.value = 1
+    o0.gain.value = 1
+    o0.pitchStart.value = this.randomValue(-5, 5) * 1200
+    o0.pitchEnd.value = o0.pitchStart.value
+
+    var o1 = this.controls[1]
+    o1.gainTension.random()
+    o1.duration.value = Math.random()
+    o1.gain.random()
+    o1.pitchStart.value = this.randomValue(0, 6000)
+    o1.pitchEnd.value = o1.pitchStart.value
+
+    var o2 = this.controls[2]
+    o2.gainTension.random()
+    o2.duration.value = Math.random()
+    o2.gain.random()
+    o2.pitchStart.value = this.randomValue(3600, 6000)
+    o2.pitchEnd.value = o2.pitchStart.value
+
+    // Mute the rest of oscillators.
+    for (var i = 3; i < this.controls.length; ++i) {
+      this.controls[i].gain.value = 0
+    }
+  }
+
   oscillate(time) {
     var out = 0
     for (var i = this.controls.length - 1; i >= 0; --i) {
@@ -458,6 +519,12 @@ function random() {
   }
   if (pullDownMenuRandomType.value === "TomA") {
     oscillator.randomTomA()
+  }
+  if (pullDownMenuRandomType.value === "ToneA") {
+    oscillator.randomToneA()
+  }
+  if (pullDownMenuRandomType.value === "ToneB") {
+    oscillator.randomToneB()
   }
   refresh()
   play(audioContext, wave)
@@ -513,6 +580,8 @@ var pullDownMenuRandomType = new PullDownMenu(divRenderControls.element, null,
 pullDownMenuRandomType.add("All")
 pullDownMenuRandomType.add("Bassdrum")
 pullDownMenuRandomType.add("TomA")
+pullDownMenuRandomType.add("ToneA")
+pullDownMenuRandomType.add("ToneB")
 var checkboxQuickSave = new Checkbox(divRenderControls.element, "QuickSave",
   false, (checked) => { })
 
