@@ -54,8 +54,6 @@ class EnvelopeView extends Canvas {
     this.element.addEventListener("mousedown", (event) => this.onMouseDown(event), false)
     this.element.addEventListener("mousemove", (event) => this.onMouseMove(event), false)
     this.element.addEventListener("mouseup", (event) => this.onMouseUp(event), false)
-    this.element.addEventListener("mousein", (event) => this.onMouseIn(event), false)
-    this.element.addEventListener("mouseout", (event) => this.onMouseOut(event), false)
   }
 
   clampX(value) {
@@ -83,6 +81,11 @@ class EnvelopeView extends Canvas {
     return new Vec2(event.clientX - rect.left, event.clientY - rect.top)
   }
 
+  getMouseMove() {
+    console.log(event)
+    return new Vec2(event.movementX, event.movementY)
+  }
+
   onLoad(event) {
     this.grabbed = null
   }
@@ -100,43 +103,25 @@ class EnvelopeView extends Canvas {
   onMouseDown(event) {
     var mousePosition = this.getMousePosition()
     this.grabbed = this.grabPoint(mousePosition)
+    if (this.grabbed !== null) {
+      this.element.requestPointerLock()
+    }
   }
 
   onMouseMove(event) {
     if (this.grabbed === null) {
       return
     }
-    this.grabbed.copy(this.getMousePosition())
+    this.grabbed.add(this.getMouseMove())
+    this.grabbed.x = Math.max(0, Math.min(this.grabbed.x, this.width))
+    this.grabbed.y = Math.max(0, Math.min(this.grabbed.y, this.height))
     this.draw()
   }
 
   onMouseUp(event) {
     this.grabbed = null
     this.refresh()
-  }
-
-  onMouseIn(event) {
-    this.grabbed = null
-  }
-
-  onMouseOut(event) {
-    var position = this.getMousePosition()
-    if (this.grabbed !== null) {
-      if (position.x < 0) {
-        this.grabbed.x = 0
-      }
-      else if (position.x > this.width) {
-        this.grabbed.x = this.width
-      }
-      if (position.y < 0) {
-        this.grabbed.y = 0
-      }
-      else if (position.y > this.height) {
-        this.grabbed.y = this.height
-      }
-      this.grabbed = null
-    }
-    this.refresh()
+    document.exitPointerLock();
   }
 
   refresh() {
