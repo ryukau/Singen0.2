@@ -76,12 +76,12 @@ class EnvelopeView extends Canvas {
     ]
   }
 
-  getMousePosition() {
+  getMousePosition(event) {
     var rect = event.target.getBoundingClientRect()
     return new Vec2(event.clientX - rect.left, event.clientY - rect.top)
   }
 
-  getMouseMove() {
+  getMouseMove(event) {
     return new Vec2(event.movementX, event.movementY)
   }
 
@@ -100,7 +100,7 @@ class EnvelopeView extends Canvas {
   }
 
   onMouseDown(event) {
-    var mousePosition = this.getMousePosition()
+    var mousePosition = this.getMousePosition(event)
     this.grabbed = this.grabPoint(mousePosition)
     if (this.grabbed !== null) {
       this.element.requestPointerLock()
@@ -111,7 +111,7 @@ class EnvelopeView extends Canvas {
     if (this.grabbed === null) {
       return
     }
-    this.grabbed.add(this.getMouseMove())
+    this.grabbed.add(this.getMouseMove(event))
     this.grabbed.x = Math.max(0, Math.min(this.grabbed.x, this.width))
     this.grabbed.y = Math.max(0, Math.min(this.grabbed.y, this.height))
     this.draw()
