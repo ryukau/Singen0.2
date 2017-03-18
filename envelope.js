@@ -82,7 +82,6 @@ class EnvelopeView extends Canvas {
   }
 
   getMouseMove() {
-    console.log(event)
     return new Vec2(event.movementX, event.movementY)
   }
 
