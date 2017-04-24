@@ -137,7 +137,6 @@ class WaveView extends Canvas {
   drawWave(y0) {
     this.context.strokeStyle = "#303030"
     this.context.fillStyle = "#303030"
-    this.context.lineWidth = 1
     this.context.lineCap = "round"
     this.context.save()
     this.context.translate(0, y0)
@@ -188,8 +187,9 @@ class WaveView extends Canvas {
     }
 
     var path = minArray.concat(maxArray.reverse())
-    this.preparePolygon(path)
-    this.context.fill()
+    this.context.lineWidth = 0.1
+    this.drawPolygon(path)
+    this.context.stroke()
   }
 
   drawWaveNarrow() {
@@ -210,10 +210,9 @@ class WaveView extends Canvas {
       var index = this.offset + i
       var x = i * this.width / length
       path[i] = new Vec2(x, this.fixY(this.wave[index]))
-      // this.drawLine(previous, current)
-      // previous = current
     }
 
+    this.context.lineWidth = 1
     this.preparePath(path)
     this.context.stroke()
   }
