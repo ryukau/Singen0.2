@@ -159,6 +159,10 @@ class WaveView extends Canvas {
     var yPerDot = 2 / this.height
     var interval = this.length / this.width
     var limit = this.offset
+
+    var minArray = new Array(this.width)
+    var maxArray = new Array(this.width)
+
     for (var x = 0; x < this.width; ++x) {
       var min = Number.MAX_VALUE
       var max = -Number.MAX_VALUE
@@ -176,32 +180,41 @@ class WaveView extends Canvas {
       if (prevMax < min) {
         min = prevMax
       }
-      var top = new Vec2(x, this.fixY(min))
-      var bottom = new Vec2(x, this.fixY(max))
-      this.drawLine(top, bottom)
+      minArray[x] = new Vec2(x, this.fixY(min))
+      maxArray[x] = new Vec2(x, this.fixY(max))
 
       var prevMin = min
       var prevMax = max
     }
+
+    var path = minArray.concat(maxArray.reverse())
+    this.preparePolygon(path)
+    this.context.fill()
   }
 
   drawWaveNarrow() {
     var length = this.length - 1
+    if (length < 0) {
+      return
+    }
 
     var pointRadius = 3
     var toDrawPoints = (this.width / length) > (3 * pointRadius)
 
-    var previous = new Vec2(0, this.fixY(this.wave[this.offset]))
+    var path = new Array(length)
+    path[0] = new Vec2(0, this.fixY(this.wave[this.offset]))
     for (var i = 1; i <= length; ++i) {
       if (toDrawPoints) {
-        this.drawCircle(previous, pointRadius)
+        this.drawCircle(path[i - 1], pointRadius)
       }
       var index = this.offset + i
       var x = i * this.width / length
-      var current = new Vec2(x, this.fixY(this.wave[index]))
-      this.drawLine(previous, current)
-      previous = current
+      path[i] = new Vec2(x, this.fixY(this.wave[index]))
+      // this.drawLine(previous, current)
+      // previous = current
     }
+
+    this.preparePath(path)
     this.context.stroke()
   }
 }
