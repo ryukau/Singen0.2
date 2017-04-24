@@ -32,7 +32,7 @@ class Canvas {
     return new Vec2(this.element.width / 2, this.element.height / 2)
   }
 
-  drawPath(poly) {
+  preparePath(poly) {
     if (poly.length < 1) {
       return
     }
@@ -42,7 +42,19 @@ class Canvas {
     for (let i = 1; i < poly.length; ++i) {
       this.context.lineTo(poly[i].x, poly[i].y)
     }
+  }
+
+  preparePolygon(poly) {
+    this.preparePath(poly)
     this.context.closePath()
+  }
+
+  drawPath(poly) { // compat
+    this.drawPolygon(poly)
+  }
+
+  drawPolygon(poly) {
+    this.preparePolygon(poly)
     this.context.fill()
     this.context.stroke()
   }
