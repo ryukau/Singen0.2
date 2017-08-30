@@ -594,7 +594,7 @@ var divMain = new Div(document.body, "main")
 var headingTitle = new Heading(divMain.element, 1, document.title)
 
 var description = new Description(divMain.element)
-description.add("A", "B")
+description.add("簡単な使い方", "Randomを押すとパラメータがランダムに変わって音を探すことができます。気に入った音はSaveで保存できます。")
 
 var divWaveform = new Div(divMain.element, "waveform")
 var headingWaveform = new Heading(divWaveform.element, 6, "Waveform")
