@@ -583,7 +583,7 @@ function refresh() {
 }
 
 
-// Entry point.
+//-- UI.
 
 var audioContext = new AudioContext()
 var renderParameters = new RenderParameters(audioContext, 16)
