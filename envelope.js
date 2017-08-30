@@ -138,7 +138,7 @@ class EnvelopeView extends Canvas {
   draw() {
     this.clearWhite()
 
-    this.context.strokeStyle = "#333333"
+    this.context.strokeStyle = "#000000"
     this.context.beginPath()
     this.context.moveTo(this.startPoint.x, this.startPoint.y)
     this.context.bezierCurveTo(
@@ -148,14 +148,17 @@ class EnvelopeView extends Canvas {
     )
     this.context.stroke()
 
-    this.context.strokeStyle = "#cccccc"
+    this.context.strokeStyle = "#888888"
+    this.context.setLineDash([5, 10])
     this.drawLine(this.startPoint, this.points[0])
     this.drawLine(this.endPoint, this.points[1])
+    this.context.setLineDash([0])
 
-    this.context.fillStyle = "#aaaaff"
-    this.context.strokeStyle = "#333333"
+    // draw control points.
+    this.context.fillStyle = "#0066ff"
+    this.context.strokeStyle = "#abe2fc"
     for (var i = 0; i < this.points.length; ++i) {
-      this.drawCircle(this.points[i], this.pointRadius)
+      this.drawPoint(this.points[i], this.pointRadius)
     }
   }
 }
