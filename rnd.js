@@ -9,7 +9,7 @@ class Rnd {
 
   // Takes any integer
   seed(i) {
-    this.m_w = i;
+    this.m_w = isNaN(i) ? 123456789 : i;
     this.m_z = 987654321;
   }
 
