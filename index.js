@@ -165,6 +165,9 @@ class Oscillator {
   constructor(renderParameters) {
     this.renderParameters = renderParameters
 
+    this._seed = 0
+    this.rnd = new Rnd(this._seed)
+
     this.gain = 1
     this.gainEnvelope = new Envelope(0.5, 0.5, 0.5, 0.5)
     this.pitchEnvelope = new Envelope(0.5, 0.5, 0.5, 0.5)
@@ -176,6 +179,14 @@ class Oscillator {
     this.modulationType = "PhaseShift"
 
     this.phase = 0
+
+    this.overtonePhaseTable = [0]
+    this.overtoneDetuneTable = [0]
+
+    this.overtoneBase = 32
+    this._overtoneNum = 0
+    this.overtoneDetune = 10
+    this.overtoneAttenuation = 0.9
 
     this.twoPiRate = TWO_PI / this.renderParameters.sampleRate
     this.pitchDiff = this._pitchStart - this._pitchEnd
@@ -221,19 +232,30 @@ class Oscillator {
     this.pitchEndFixed = this._pitchEnd - 1
   }
 
+  set overtoneNum(value) {
+    this._overtoneNum = value
+    this.makeOvertoenTable()
+  }
+
+  set seed(value) {
+    this._seed = value
+    this.makeOvertoenTable()
+  }
+
   set modulationType(type) {
     switch (type) {
       case "FM":
         this.modulationFunc = (modulation, gain, pitch) => {
           var mod = this._fmIndex * modulation
-          var output = gain * Math.sin(this.phase + mod)
+          var output = gain * this.oscillateFunc(this.phase + mod)
           this.phase += this.twoPiRate * (pitch + this.pitchEndFixed)
           return output
         }
         break
       case "AM":
         this.modulationFunc = (modulation, gain, pitch) => {
-          var output = gain * Math.sin(this.phase) * (1 - Math.abs(modulation))
+          var output = gain * this.oscillateFunc(this.phase)
+            * (1 - Math.abs(modulation))
           this.phase += this.twoPiRate * (pitch + this.pitchEndFixed)
           return output
         }
@@ -241,13 +263,38 @@ class Oscillator {
       case "PhaseShift":
       default:
         this.modulationFunc = (modulation, gain, pitch) => {
-          var output = gain * Math.sin(this.phase)
+          var output = gain * this.oscillateFunc(this.phase)
           var mod = this._fmIndex * modulation * output
           this.phase += this.twoPiRate * (pitch + this.pitchEndFixed) + mod
           return output
         }
         break
     }
+  }
+
+  makeOvertoenTable() {
+    this.rnd.seed(this._seed)
+
+    this.overtoneDetuneTable = [0]
+    this.overtonePhaseTable = [0]
+    for (var i = 1; i <= this._overtoneNum; ++i) {
+      var cent = (0.5 - this.rnd.random()) * 2 * this.overtoneDetune
+      var ratio = Math.pow(i + 1, 1 + cent / 1200) - 1
+      this.overtoneDetuneTable.push(ratio / this._overtoneNum)
+      this.overtonePhaseTable.push(this.rnd.random() * TWO_PI)
+    }
+  }
+
+  oscillateFunc(phase) {
+    var signal = 0
+    var attenuation = 1
+    var mulAttenu = 1 - this.overtoneAttenuation
+    for (var i = 0; i <= this._overtoneNum; ++i) {
+      signal += attenuation * Math.sin(
+        this.overtonePhaseTable[i] + phase * (1 + this.overtoneDetuneTable[i]))
+      attenuation *= mulAttenu
+    }
+    return signal
   }
 
   // Pitch is represented by cents with center frequency at 440Hz.
@@ -311,6 +358,18 @@ class OscillatorControl {
       0, -6000, 6000, 1, refresh)
     this.phase = new NumberInput(this.div.element, "Phase",
       0, 0, 1, 0.01, refresh)
+
+    // Overtone parameters.
+    this.overtoneBase = new NumberInput(this.div.element, "OT.Base",
+      32, 1, 128, 1, refresh)
+    this.overtoneNum = new NumberInput(this.div.element, "OT.Num",
+      0, 0, 16, 1, refresh)
+    this.overtoneDetune = new NumberInput(this.div.element, "OT.Detune",
+      10, 0, 100, 1, refresh)
+    this.overtoneAttenuation = new NumberInput(this.div.element, "OT.Attenuation",
+      0.9, 0, 1, 0.001, refresh)
+    this.overtoneSeed = new NumberInput(this.div.element, "OT.Seed",
+      0, 0, 4294967296, 1, refresh)
   }
 
   show() {
@@ -335,6 +394,13 @@ class OscillatorControl {
     this.oscillator.pitchStart = this.pitchStart.value
     this.oscillator.pitchEnd = this.pitchEnd.value
     // this.oscillator.gainEnvelope.tension = this.gainTension.value
+
+    this.oscillator.overtoneBase = this.overtoneBase.value
+    this.oscillator.overtoneNum = this.overtoneNum.value
+    this.oscillator.overtoneDetune = this.overtoneDetune.value
+    this.oscillator.overtoneAttenuation = this.overtoneAttenuation.value
+    this.oscillator.seed = this.overtoneSeed.value
+
     this.oscillator.refresh(this.phase.value * TWO_PI)
   }
 
