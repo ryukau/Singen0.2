@@ -527,7 +527,7 @@ class OscillatorGroup {
     o0.overtoneBase.value = Math.floor(
       1 + otbase * otbase * otbase * this.randomValue(0, 127))
     o0.overtoneNum.random()
-    o0.overtoneDetune.value = this.randomValue(0, 100)
+    o0.overtoneDetune.value = this.randomValue(0, 1200)
     o0.overtoneAttenuation.value = this.randomValue(0.25, 0.9)
     o0.seed.random()
 
