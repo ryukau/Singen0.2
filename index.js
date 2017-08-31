@@ -72,6 +72,16 @@ function makeWave(length, sampleRate) {
   for (var t = 0; t < wave.length; ++t) {
     wave[t] += oscillator.oscillate(t)
   }
+
+  // --
+  // var clickLength = Math.floor(sampleRate * 0.02)
+  // var clickTable = makeClickTable(clickLength, 16, 0.2, 0.4)
+  // for (var t = 0; t < clickTable.length; ++t) {
+  //   wave[t] *= clickTable[t]
+  //   // wave[t] = clickTable[t]
+  // }
+  // --
+
   return wave
 }
 
