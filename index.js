@@ -365,7 +365,7 @@ class OscillatorControl {
     this.overtoneNum = new NumberInput(this.div.element, "OT.Num",
       0, 0, 16, 1, refresh)
     this.overtoneDetune = new NumberInput(this.div.element, "OT.Detune",
-      10, 0, 100, 1, refresh)
+      10, 0, 1200, 1, refresh)
     this.overtoneAttenuation = new NumberInput(this.div.element, "OT.Attenuation",
       0.9, 0, 1, 0.001, refresh)
     this.seed = new NumberInput(this.div.element, "Seed",
