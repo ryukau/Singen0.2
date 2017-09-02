@@ -9,7 +9,7 @@ class Resampler {
 
     for (var i = 0; i < win.length; ++i) {
       var t = (i - halfWinLength)
-      win[i] = cutoff * this.sinc(cutoff * t)
+      win[i] *= cutoff * this.sinc(cutoff * t)
     }
 
     var ratio = sourceRate / destRate
