@@ -5,7 +5,7 @@ class Resampler {
     var win = this.blackmanHarrisWindow(this.windowLength)
     var halfWinLength = Math.floor(win.length / 2)
 
-    var cutoff = Math.PI * destRate / sourceRate
+    var cutoff = destRate / sourceRate
 
     for (var i = 0; i < win.length; ++i) {
       var t = (i - halfWinLength)
