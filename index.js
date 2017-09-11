@@ -415,9 +415,11 @@ class OscillatorControl {
   }
 
   random() {
+    this.duration.random()
+    this.gain.random()
+
     this.gainTension.random()
     this.pitchTension.random()
-    // this.gain.random()
     this.pitchStart.random()
     this.pitchEnd.random()
 
@@ -498,6 +500,14 @@ class OscillatorGroup {
     for (var i = 0; i < this.controls.length; ++i) {
       this.controls[i].random()
     }
+    this.controls[0].duration.value = 1
+  }
+
+  randomFullDuration() {
+    for (var i = 0; i < this.controls.length; ++i) {
+      this.controls[i].random()
+      this.controls[i].duration.value = 1
+    }
   }
 
   randomBassdrum() {
@@ -568,6 +578,11 @@ class OscillatorGroup {
     o0.gain.value = 1
     o0.pitchStart.value = this.randomValue(-1200, 1200)
     o0.pitchEnd.value = this.randomValue(-6000, -3600)
+    o0.overtoneBase.value = this.randomValue(64, 128)
+    o0.overtoneNum.random()
+    o0.overtoneDetune.value = 0
+    o0.overtoneAttenuation.random()
+    o0.seed.random()
 
     var o1 = this.controls[1]
     o1.gainTension.random()
@@ -576,6 +591,11 @@ class OscillatorGroup {
     o1.gain.value = this.randomValue(0.01, 0.5)
     o1.pitchStart.value = this.randomValue(0, 6000)
     o1.pitchEnd.value = this.randomValue(1200, 4800)
+    o1.overtoneBase.value = 0
+    o1.overtoneNum.value = 0
+    o1.overtoneDetune.value = 0
+    o1.overtoneAttenuation.value = 0
+    o1.seed.value = 0
 
     var o2 = this.controls[2]
     o2.gainTension.random()
@@ -584,6 +604,11 @@ class OscillatorGroup {
     o2.gain.random()
     o2.pitchStart.value = this.randomValue(3600, 6000)
     o2.pitchEnd.value = o2.pitchStart.value - this.randomValue(0, 3600)
+    o2.overtoneBase.value = 0
+    o2.overtoneNum.value = 0
+    o2.overtoneDetune.value = 0
+    o2.overtoneAttenuation.value = 0
+    o2.seed.value = 0
 
     // Mute the rest of oscillators.
     for (var i = 3; i < this.controls.length; ++i) {
@@ -598,6 +623,11 @@ class OscillatorGroup {
     o0.gain.value = 1
     o0.pitchStart.value = Math.round(this.randomValue(-3, 1)) * 1200
     o0.pitchEnd.value = o0.pitchStart.value
+    o0.overtoneBase.random()
+    o0.overtoneNum.random()
+    o0.overtoneDetune.random()
+    o0.overtoneAttenuation.random()
+    o0.seed.random()
 
     var o1 = this.controls[1]
     o1.gainTension.random()
@@ -610,6 +640,11 @@ class OscillatorGroup {
     var fixed = o0pitch + (raw - o0pitch) % 2400
     o1.pitchStart.value = fixed + this.randomValue(-25, 25)
     o1.pitchEnd.value = o1.pitchStart.value
+    o1.overtoneBase.random()
+    o1.overtoneNum.random()
+    o1.overtoneDetune.random()
+    o1.overtoneAttenuation.random()
+    o1.seed.random()
 
     var o2 = this.controls[2]
     o2.gainTension.random()
@@ -617,6 +652,11 @@ class OscillatorGroup {
     o2.gain.random()
     o2.pitchStart.value = this.randomValue(-6000, 6000)
     o2.pitchEnd.value = o2.pitchStart.value
+    o2.overtoneBase.random()
+    o2.overtoneNum.random()
+    o2.overtoneDetune.random()
+    o2.overtoneAttenuation.random()
+    o2.seed.random()
 
     // Mute the rest of oscillators.
     for (var i = 3; i < this.controls.length; ++i) {
@@ -631,20 +671,31 @@ class OscillatorGroup {
     o0.gain.value = 1
     o0.pitchStart.value = this.randomValue(-5, 5) * 1200
     o0.pitchEnd.value = o0.pitchStart.value
+    o0.overtoneBase.value = this.randomValue(0, 16)
+    o0.overtoneNum.random()
+    o0.overtoneDetune.random()
+    o0.overtoneAttenuation.random()
+    o0.seed.random()
 
     var o1 = this.controls[1]
     o1.gainTension.random()
-    o1.duration.value = Math.random()
+    o1.duration.random()
     o1.gain.random()
     o1.pitchStart.value = this.randomValue(0, 6000)
     o1.pitchEnd.value = o1.pitchStart.value
+    o1.overtoneBase.value = this.randomValue(0, 16)
+    o1.overtoneNum.random()
+    o1.overtoneDetune.random()
+    o1.overtoneAttenuation.random()
+    o1.seed.random()
 
     var o2 = this.controls[2]
     o2.gainTension.random()
-    o2.duration.value = Math.random()
+    o2.duration.value = o1.duration.value / 2
     o2.gain.random()
     o2.pitchStart.value = this.randomValue(3600, 6000)
     o2.pitchEnd.value = o2.pitchStart.value
+    o2.overtoneNum.value = 0
 
     // Mute the rest of oscillators.
     for (var i = 3; i < this.controls.length; ++i) {
@@ -662,23 +713,29 @@ class OscillatorGroup {
 }
 
 function random() {
-  if (pullDownMenuRandomType.value === "All") {
-    oscillator.random()
-  }
-  if (pullDownMenuRandomType.value === "Bassdrum") {
-    oscillator.randomBassdrum()
-  }
-  if (pullDownMenuRandomType.value === "BassdrumOT") {
-    oscillator.randomBassdrumOvertone()
-  }
-  if (pullDownMenuRandomType.value === "TomA") {
-    oscillator.randomTomA()
-  }
-  if (pullDownMenuRandomType.value === "ToneA") {
-    oscillator.randomToneA()
-  }
-  if (pullDownMenuRandomType.value === "ToneB") {
-    oscillator.randomToneB()
+  switch (pullDownMenuRandomType.value) {
+    case "AllMaxDuration":
+      oscillator.randomFullDuration()
+      break;
+    case "Bassdrum":
+      oscillator.randomBassdrum()
+      break;
+    case "BassdrumOT":
+      oscillator.randomBassdrumOvertone()
+      break;
+    case "TomA":
+      oscillator.randomTomA()
+      break;
+    case "ToneA":
+      oscillator.randomToneA()
+      break;
+    case "ToneB":
+      oscillator.randomToneB()
+      break;
+    case "All":
+    default:
+      oscillator.random()
+      break;
   }
   refresh()
   play(audioContext, wave)
@@ -732,6 +789,7 @@ var buttonRandom = new Button(divRenderControls.element, "Random",
 var pullDownMenuRandomType = new PullDownMenu(divRenderControls.element, null,
   () => { })
 pullDownMenuRandomType.add("All")
+pullDownMenuRandomType.add("AllMaxDuration")
 pullDownMenuRandomType.add("Bassdrum")
 pullDownMenuRandomType.add("BassdrumOT")
 pullDownMenuRandomType.add("TomA")
