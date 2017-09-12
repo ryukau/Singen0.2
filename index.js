@@ -501,6 +501,7 @@ class OscillatorGroup {
       this.controls[i].random()
     }
     this.controls[0].duration.value = 1
+    this.controls[0].gain.value = 1
   }
 
   randomFullDuration() {
@@ -508,6 +509,7 @@ class OscillatorGroup {
       this.controls[i].random()
       this.controls[i].duration.value = 1
     }
+    this.controls[0].gain.value = 1
   }
 
   randomBassdrum() {
