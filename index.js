@@ -355,9 +355,9 @@ class OscillatorControl {
     this.headingOscillatorControls = new Heading(this.div.element, 6,
       "Oscillator" + id)
     this.gainTension = new EnvelopeView(this.div.element,
-      256, 128, 0.2, 0.2, 0.8, 0.8, refresh)
+      256, 128, 0.2, 0.2, 0.8, 0.8, "gain", refresh)
     this.pitchTension = new EnvelopeView(this.div.element,
-      256, 128, 0.2, 0.2, 0.8, 0.8, refresh)
+      256, 128, 0.2, 0.2, 0.8, 0.8, "pitch", refresh)
     this.duration = new NumberInput(this.div.element, "Duration",
       1, 0, 1, 0.01, refresh)
     this.gain = new NumberInput(this.div.element, "Gain",

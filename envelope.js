@@ -36,8 +36,9 @@ class Envelope {
 }
 
 class EnvelopeView extends Canvas {
-  constructor(parent, width, height, x1, y1, x2, y2, refreshFunc) {
+  constructor(parent, width, height, x1, y1, x2, y2, label, refreshFunc) {
     super(parent, width, height)
+    this.label = label
     this.refreshFunc = refreshFunc
 
     this.pointRadius = 8
@@ -137,6 +138,11 @@ class EnvelopeView extends Canvas {
 
   draw() {
     this.clearWhite()
+
+    var fontSize = 16
+    this.context.fillStyle = "#202020"
+    this.context.font = `${fontSize}px serif`
+    this.context.fillText(this.label, fontSize, this.height - fontSize)
 
     this.context.strokeStyle = "#000000"
     this.context.beginPath()
