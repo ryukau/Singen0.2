@@ -784,8 +784,6 @@ var waveView = new WaveView(divWaveform.element, 512, 256, wave.left, false)
 var divRenderControls = new Div(divMain.element, "renderControls")
 var buttonPlay = new Button(divRenderControls.element, "Play",
   () => play(audioContext, wave))
-var buttonSave = new Button(divRenderControls.element, "Save",
-  () => save(wave))
 var buttonRandom = new Button(divRenderControls.element, "Random",
   () => random())
 var pullDownMenuRandomType = new PullDownMenu(divRenderControls.element, null,
@@ -797,13 +795,15 @@ pullDownMenuRandomType.add("BassdrumOT")
 pullDownMenuRandomType.add("TomA")
 pullDownMenuRandomType.add("ToneA")
 pullDownMenuRandomType.add("ToneB")
+var buttonSave = new Button(divRenderControls.element, "Save",
+  () => save(wave))
 var checkboxQuickSave = new Checkbox(divRenderControls.element, "QuickSave",
   false, (checked) => { })
 
 var divMiscControls = new Div(divMain.element, "MiscControls")
 var headingRender = new Heading(divMiscControls.element, 6, "Render Settings")
 var inputLength = new NumberInput(divMiscControls.element, "Length",
-  0.2, 0.02, 1, 0.02, (value) => { refresh() })
+  0.2, 0.01, 1, 0.01, (value) => { refresh() })
 var inputFmIndex = new NumberInput(divMiscControls.element, "Mod. Index",
   4, 0, 8, 0.05, (value) => { refresh() })
 var radioButtonModulationType = new RadioButton(divMiscControls.element,
