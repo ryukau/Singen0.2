@@ -736,6 +736,7 @@ function random() {
       break;
     case "All":
     default:
+      inputLength.random()
       oscillator.random()
       break;
   }
